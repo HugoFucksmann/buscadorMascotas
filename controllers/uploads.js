@@ -27,7 +27,6 @@ const fileUploads = (req, res) => {
     
     let file 
     if( req.files.imgMascota ){
-      console.log(req.files.imgMascota);
       file = req.files.imgMascota;
     }else if (req.files.imgU) {
       file = req.files.imgU;
