@@ -62,11 +62,10 @@ const googleSignIn = async (req, res = response) => {
       usuario = usuarioDB;
       //usuarioDB.google = true;
     }
-    const token = await generarJWT(usuario.id);
+    //const token = await generarJWT(usuario.id);
     
     res.json({
       ok: true,
-      token,
       usuario
     });
   } catch (error) {
