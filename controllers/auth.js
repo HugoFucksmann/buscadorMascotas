@@ -38,40 +38,36 @@ const login = async (req, res) => {
 };
 
 const googleSignIn = async (req, res = response) => {
-  const googleToken = req.body.token;
 
+  const googleToken = req.body.token;
+ 
   try {
     const { name, email, picture } = await googleVerify(googleToken);
 
     //crear usuario a partir de googleSingIn
     const usuarioDB = await Usuario.findOne({ email });
     let usuario;
-
     if (!usuarioDB) {
       //si no existe el usuario en BD
       usuario = new Usuario({
-        nombre: name,
+        name,
         email,
         password: "@@@",
         img: picture,
         google: true,
       });
+      await usuario.save();
     } else {
       //existe usuario
       usuario = usuarioDB;
-      usuarioDB.google = true;
+      //usuarioDB.google = true;
     }
-
-    //guarda en BBDD
-    await usuario.save();
-
-    //Generar TOKEN - JWT
     const token = await generarJWT(usuario.id);
-    //-------------------------------------------------
-
+    
     res.json({
       ok: true,
       token,
+      usuario
     });
   } catch (error) {
     res.status(401).json({
@@ -83,18 +79,30 @@ const googleSignIn = async (req, res = response) => {
 };
 
 const renewToken = async (req, res) => {
-  const _id = req._id;
+  
+  const _id = req.body.id;
+  let userr
+  try {
+    userr = await Usuario.findById(_id);
 
-  //generar el TOKEN JWT
-  const token = await generarJWT(_id);
-
-  // obtener usuario por _id
-  const usuario = await Usuario.findById(_id);
-
-  res.json({
-    ok: true,
-    token,
-  });
+    if(!userr) {
+      res.status(400).json({
+        ok: false,
+        msg: 'no existe usuario'
+      })
+    }
+    const token = await generarJWT(_id);
+    res.json({
+      ok: true,
+      token,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({
+      ok: false,
+      msg: "error al generar retoken",
+    });
+  }
 };
 
 module.exports = {

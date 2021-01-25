@@ -12,6 +12,7 @@ const getMascota = async (req, res = response) => {
 };
 
 const crearMascota = async (req, res = response) => {
+ 
   const uid = req.uid; // se extrae del middleware validarToken
   const mascota = new Mascota({
     usuario: uid,
@@ -108,3 +109,38 @@ module.exports = {
   actualizarMascota,
   borrarMascota,
 };
+
+/*
+let file 
+    if( req.files.imgMascota ){
+      file = req.files.imgMascota;
+    }else if (req.files.imgU) {
+      file = req.files.imgU;
+    }else{
+      file = null
+    }
+    const nombreCortado = file.name.split(".");
+    const extensionArchivo = nombreCortado[nombreCortado.length - 1]; //capturamos la extencion
+
+    //validar la extension
+    const extensionesValidas = ["png", "jpg", "jpeg"];
+
+    if (!extensionesValidas.includes(extensionArchivo)) {
+      return res.status(400).json({
+        ok: false,
+        msg: "No es una extension valida",
+      });
+    }
+
+    const nombreArchivo = `${uuidv4()}.${extensionArchivo}`;
+    const path = `./uploads/${tipo}/${nombreArchivo}`; 
+    
+    file.mv(path, (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({
+          ok: false,
+          msg: "Error al mover la imagen",
+        });
+      }
+*/

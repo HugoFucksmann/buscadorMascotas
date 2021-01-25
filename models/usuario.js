@@ -1,6 +1,9 @@
 const { Schema, model } = require("mongoose");
 
 const UsuarioSchema = Schema({
+  name: {
+    type: String,
+  },
   email: {
     type: String,
     required: true,
@@ -9,9 +12,6 @@ const UsuarioSchema = Schema({
   password: {
     type: String,
     required: true,
-  },
-  telefono: {
-    type: Number,
   },
   img: {
     type: String,
@@ -24,9 +24,9 @@ const UsuarioSchema = Schema({
 
 //para cambiar algun parametro, config global (ej: _id por id)
 UsuarioSchema.method("toJSON", function () {
-  const { __v, _id, password, ...Object } = this.toObject();
+  const { __v, password, email,  ...Object } = this.toObject();
 
-  Object.uid = _id;
+ 
   return Object;
 });
 

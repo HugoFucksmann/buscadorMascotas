@@ -6,9 +6,7 @@ const { actualizarImagen } = require("../helpers/actualizar-img");
 const fileUploads = (req, res) => {
   const tipo = req.params.tipo;
   const id = req.params.id;
-
   try {
-    //validar tipos
     const tiposValidos = ["imgMascota","imgU"];
    
     if (!tiposValidos.includes(tipo)) {
@@ -26,9 +24,10 @@ const fileUploads = (req, res) => {
       });
     }
    
-    //prosesar la img
-    let file // middleware en rutas
+    
+    let file 
     if( req.files.imgMascota ){
+      console.log(req.files.imgMascota);
       file = req.files.imgMascota;
     }else if (req.files.imgU) {
       file = req.files.imgU;
@@ -50,7 +49,6 @@ const fileUploads = (req, res) => {
 
     const nombreArchivo = `${uuidv4()}.${extensionArchivo}`;
     const path = `./uploads/${tipo}/${nombreArchivo}`; 
-    console.log(path);
     
     file.mv(path, (err) => {
       if (err) {

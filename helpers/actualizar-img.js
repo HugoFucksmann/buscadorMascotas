@@ -17,7 +17,7 @@ const actualizarImagen = async (tipo, id, nombreArchivo) => {
   }
 
   switch (tipo) {
-    case "mascota":
+    case "imgMascota":
       pathViejo = `../uploads/mascota/${mascota.petPicture}`;
 
       borrarImagen(pathViejo);
