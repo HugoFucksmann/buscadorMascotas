@@ -6,12 +6,9 @@ const UsuarioSchema = Schema({
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
   },
   password: {
     type: String,
-    required: true,
   },
   img: {
     type: String,
@@ -19,6 +16,10 @@ const UsuarioSchema = Schema({
   google: {
     type: Boolean,
     default: false,
+  },
+  notification: {
+    type: String,
+    unique: true,
   },
 });
 

@@ -6,16 +6,12 @@ const { getUsuarios, crearUsuario, actualizarUsuario, borrarUsuario } = require(
 const router = Router();
 
 router.get("/", validarJWT, getUsuarios);
-router.post("/",
-  [
-    validarJWT,
-    check("email", "El email es obligatorio").isEmail(),
-    check("password", "El password es obligatorio").notEmpty(),
-    validarCampos,
-  ],
-  crearUsuario
-);
+router.post("/", crearUsuario );
 router.put("/:uid", validarJWT, actualizarUsuario);
 router.delete("/", validarJWT, borrarUsuario);
 
 module.exports = router;
+
+/*
+ [check("notification", "no lleva notificaciones").notEmpty(), validarCampos],
+*/

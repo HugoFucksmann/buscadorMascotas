@@ -16,6 +16,7 @@ app.use("/api/login", require("./routes/auth"));
 app.use("/api/usuarios", require("./routes/usuarios"));
 app.use("/api/mascotas", require("./routes/mascotas"));
 app.use("/api/upload", require("./routes/uploads"));
+app.use("/api/notification", require("./routes/notification"));
 
 /* app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "public/index.html"));

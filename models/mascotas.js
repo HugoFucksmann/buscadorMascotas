@@ -14,6 +14,10 @@ const MascotaSchema = Schema(
     petName: {
       type: String,
     },
+    notification: {
+      type: String,
+      required: true
+    },
     petPicture: {
       type: String,
     },
@@ -25,7 +29,6 @@ const MascotaSchema = Schema(
     },
     petDescription: {
       type: String,
-      unique: true,
     },
     petColor: {
       type: String,
@@ -45,9 +48,8 @@ const MascotaSchema = Schema(
       type: Boolean,
     },
     usuario: {
+      type: String,
       require: true,
-      type: Schema.Types.ObjectId,
-      ref: "Usuario",
     },
     date: {
       type: String,

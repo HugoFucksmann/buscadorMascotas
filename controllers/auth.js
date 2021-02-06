@@ -40,12 +40,13 @@ const login = async (req, res) => {
 const googleSignIn = async (req, res = response) => {
 
   const googleToken = req.body.token;
- 
+  const notification = req.body.notificationToken;
+  
   try {
     const { name, email, picture } = await googleVerify(googleToken);
 
     //crear usuario a partir de googleSingIn
-    const usuarioDB = await Usuario.findOne({ email });
+    const usuarioDB = await Usuario.findOne({ notification });
     let usuario;
     if (!usuarioDB) {
       //si no existe el usuario en BD
@@ -55,18 +56,23 @@ const googleSignIn = async (req, res = response) => {
         password: "@@@",
         img: picture,
         google: true,
+        notification: notification,
       });
       await usuario.save();
-    } else {
-      //existe usuario
+    } else if(usuarioDB.google) {
       usuario = usuarioDB;
-      //usuarioDB.google = true;
+    }else{
+      usuario = await Usuario.findByIdAndUpdate(usuarioDB._id, {name, email, img: picture, google: true}, {
+        new: true,
+      });
     }
-    //const token = await generarJWT(usuario.id);
-    
+   
+    const token = await generarJWT(usuario._id);
+
     res.json({
       ok: true,
-      usuario
+      usuario,
+      token
     });
   } catch (error) {
     res.status(401).json({
@@ -85,13 +91,15 @@ const renewToken = async (req, res) => {
     userr = await Usuario.findById(_id);
 
     if(!userr) {
-      res.status(400).json({
+      return res.status(400).json({
         ok: false,
         msg: 'no existe usuario'
       })
     }
     const token = await generarJWT(_id);
-    res.json({
+    
+   
+    return res.json({
       ok: true,
       token,
     });

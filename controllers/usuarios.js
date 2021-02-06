@@ -6,16 +6,20 @@ const { generarJWT } = require("../helpers/jwt");
 
 
 const getUsuarios = async (req, res) => {
-  const desde = Number(req.query.desde) || 0;
+ 
+  const notification = req.body.notification;
+  const existeUsu = await Usuario.findOne({ notification }); //* promesa
 
-  // {} para aplicar filtros
-  /*const usuarios = await Usuario
-                            .find( {}, 'nombre email role google' )
-                            .skip( desde )
-                            .limit( 5 );
+  if (existeUsu) {
+    return res.status(400).json({
+      ok: true,
+      msg: "El usuario ya esta registrado",
+    });
+  }
+ 
+ 
+  /* const desde = Number(req.query.desde) || 0;
 
-    const total = await Usuario.count();*/
-  //otra forma propia de js
   const [usuarios, total] = await Promise.all([
     Usuario.find({}, "nombre email telefono google img").skip(desde).limit(5),
 
@@ -26,39 +30,37 @@ const getUsuarios = async (req, res) => {
     ok: true,
     usuarios,
     total,
-    //uid: req.uid //id del usuario que realiza la peticion
-  });
+    
+  }); */
+  
 };
 
 const crearUsuario = async (req, res = response) => {
-  const { email, password } = req.body;
-
+  const { notification } = req.body.user;
   try {
-    const existeEmail = await Usuario.findOne({ email }); //* promesa
-
-    if (existeEmail) {
-      return res.status(400).json({
-        ok: false,
-        msg: "El correo ya esta registrado",
+    const existeUsu = await Usuario.findOne({ notification }); 
+    
+    if (existeUsu) {
+      return res.json({
+        ok: true,
+        user: existeUsu
       });
     }
-
-    const usuario = new Usuario(req.body);
+    const user = new Usuario(req.body.user);
 
     //* Encriptar contrasegna
-    const salt = bcrypt.genSaltSync(12);
-    usuario.password = bcrypt.hashSync(password, salt);
+    //const salt = bcrypt.genSaltSync(12);
+    //usuario.password = bcrypt.hashSync(password, salt);
 
     //* guarda usuario
-    await usuario.save();
-
+    await user.save();
+    
     //Generar TOKEN - JWT
-    const token = await generarJWT(usuario.id);
+    //const token = await generarJWT(usuario.id);
 
     res.json({
       ok: true,
-      usuario,
-      token,
+      user
     });
   } catch (err) {
     console.log(err);

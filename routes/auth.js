@@ -15,13 +15,7 @@ router.post("/",
   login
 );
 
-router.post("/google",
-  [
-    check("token", "El token de Google es obligatorio").notEmpty(),
-    validarCampos,
-  ],
-  googleSignIn
-);
+router.post("/google", googleSignIn );
 
 router.post("/renew", renewToken);
 
