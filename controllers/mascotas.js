@@ -1,20 +1,20 @@
+const fetch = require("node-fetch");
 const Mascota = require("../models/mascotas");
+const Usuario = require("../models/usuario");
 
 const getMascota = async (req, res = response) => {
   const mascotas = await Mascota.find()
-  const total = await Mascota.countDocuments();
-
+  //const total = await Mascota.countDocuments();
+  
   res.json({
     ok: true,
     mascotas,
-    total,
   });
 };
 
 const crearMascota = async (req, res = response) => {
  
   const uid = req.uid; // se extrae del middleware validarToken
-  console.log();
   const mascota = new Mascota({
     usuario: uid,
     notification: req.body.notification,
@@ -23,6 +23,28 @@ const crearMascota = async (req, res = response) => {
 
   try {
     const mascotaDB = await mascota.save();
+    const usuarios = await Usuario.find();
+    const messages = usuarios.map((mascota) => {
+      return {
+        to: mascota.notification,
+        sound: "default",
+        title: 'se perdio un perrito !!',
+        body: 'estate atento si lo ves',
+      };
+    });
+    console.log(messages);
+    
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messages),
+    })
+    .then((res) => res.json()) // expecting a json response
+    .then((json) => console.log('ress  ', json));
     
     res.json({
       ok: true,
@@ -110,4 +132,5 @@ module.exports = {
   crearMascota,
   actualizarMascota,
   borrarMascota,
+  
 };

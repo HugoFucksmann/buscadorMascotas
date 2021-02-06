@@ -35,6 +35,24 @@ const getUsuarios = async (req, res) => {
   
 };
 
+const getAllNotificationTokens = async (req, res = response) => {
+  try {
+    const usuarios = await Usuario.find();
+    const tokens = usuarios.map((mascota) => mascota.notification);
+    console.log('gg');
+    res.json({
+      ok: true,
+      tokens,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      ok: false,
+      msj: "error :(",
+    });
+  }
+};
+
 const crearUsuario = async (req, res = response) => {
   const { notification } = req.body.user;
   try {
@@ -135,4 +153,5 @@ module.exports = {
   crearUsuario,
   actualizarUsuario,
   borrarUsuario,
+  getAllNotificationTokens,
 };
