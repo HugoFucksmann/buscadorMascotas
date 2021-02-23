@@ -12,6 +12,25 @@ const getMascota = async (req, res = response) => {
   });
 };
 
+const getMiMascota = async (req, res = response) => {
+  const uid = req.params.id
+
+  const miMascota = await Mascota.findOne({ uid });
+
+  try {
+    res.json({
+      ok: true,
+      miMascota,
+    });
+  } catch (error) {
+    console.log(error);
+     res.status(400).json({
+       ok: false,
+       msj: "no tienes mascota perdida",
+     });
+  }
+};
+
 const crearMascota = async (req, res = response) => {
  
   const uid = req.uid; // se extrae del middleware validarToken
@@ -24,15 +43,18 @@ const crearMascota = async (req, res = response) => {
   try {
     const mascotaDB = await mascota.save();
     const usuarios = await Usuario.find();
-    const messages = usuarios.map((mascota) => {
-      return {
-        to: mascota.notification,
-        sound: "default",
-        title: 'se perdio un perrito !!',
-        body: 'estate atento si lo ves',
-      };
+    
+    const messages = usuarios.map((usuario) => {
+      if(usuario.notification){
+         return {
+           to: usuario.notification,
+           sound: "default",
+           title: "se perdio un perrito !!",
+           body: "entra a verlo para estar atento",
+         };
+      } 
+     
     });
-    console.log(messages);
     
     await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
@@ -43,7 +65,7 @@ const crearMascota = async (req, res = response) => {
       },
       body: JSON.stringify(messages),
     })
-    .then((res) => res.json()) // expecting a json response
+    .then((res) => res.json())
     .then((json) => console.log('ress  ', json));
     
     res.json({
@@ -132,5 +154,5 @@ module.exports = {
   crearMascota,
   actualizarMascota,
   borrarMascota,
-  
+  getMiMascota,
 };

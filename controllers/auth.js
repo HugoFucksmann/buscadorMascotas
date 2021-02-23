@@ -38,7 +38,7 @@ const login = async (req, res) => {
 };
 
 const googleSignIn = async (req, res = response) => {
-
+  
   const googleToken = req.body.token;
   const notification = req.body.notificationToken;
   
@@ -46,7 +46,7 @@ const googleSignIn = async (req, res = response) => {
     const { name, email, picture } = await googleVerify(googleToken);
 
     //crear usuario a partir de googleSingIn
-    const usuarioDB = await Usuario.findOne({ notification });
+    const usuarioDB = await Usuario.findOne({ email });
     let usuario;
     if (!usuarioDB) {
       //si no existe el usuario en BD
@@ -89,7 +89,7 @@ const renewToken = async (req, res) => {
   let userr
   try {
     userr = await Usuario.findById(_id);
-
+    
     if(!userr) {
       return res.status(400).json({
         ok: false,

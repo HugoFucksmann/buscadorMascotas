@@ -9,7 +9,7 @@ const getUsuarios = async (req, res) => {
  
   const notification = req.body.notification;
   const existeUsu = await Usuario.findOne({ notification }); //* promesa
-
+  
   if (existeUsu) {
     return res.status(400).json({
       ok: true,
@@ -54,7 +54,8 @@ const getAllNotificationTokens = async (req, res = response) => {
 };
 
 const crearUsuario = async (req, res = response) => {
-  const { notification } = req.body.user;
+  const notification  = req.body.notificationToken;
+  console.log(notification);
   try {
     const existeUsu = await Usuario.findOne({ notification }); 
     
@@ -64,7 +65,13 @@ const crearUsuario = async (req, res = response) => {
         user: existeUsu
       });
     }
-    const user = new Usuario(req.body.user);
+    const user = new Usuario({
+      name: `usuario ${Math.random()}`, //todo: ver round y metodo
+      password: "@@@",
+      img: "",
+      google: false,
+      notification: notificationToken,
+    });
 
     //* Encriptar contrasegna
     //const salt = bcrypt.genSaltSync(12);
