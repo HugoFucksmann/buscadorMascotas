@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const getFecha = () => {
-  return new Date().getTime()/* .toLocaleDateString("es-ES", {
+  return new Date().getTime(); /* .toLocaleDateString("es-ES", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -16,7 +16,7 @@ const MascotaSchema = Schema(
     },
     notification: {
       type: String,
-      required: true
+      required: true,
     },
     petPicture: {
       type: String,
@@ -35,17 +35,11 @@ const MascotaSchema = Schema(
     },
     location: {
       longitude: {
-        type: [Number],
+        type: Number,
       },
       latitude: {
-        type: [Number],
+        type: Number,
       },
-    },
-    petState: {
-      type: String,
-    },
-    recovered: {
-      type: Boolean,
     },
     usuario: {
       type: String,
@@ -54,7 +48,7 @@ const MascotaSchema = Schema(
     date: {
       type: String,
       default: getFecha(),
-      required: true
+      required: true,
     },
   },
   { collection: "mascotas" }

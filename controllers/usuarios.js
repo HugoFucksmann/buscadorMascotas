@@ -54,8 +54,10 @@ const getAllNotificationTokens = async (req, res = response) => {
 };
 
 const crearUsuario = async (req, res = response) => {
+  
   const notification  = req.body.notificationToken;
-  console.log(notification);
+  //const ubi = req.body.ubi;
+  
   try {
     const existeUsu = await Usuario.findOne({ notification }); 
     
@@ -65,17 +67,16 @@ const crearUsuario = async (req, res = response) => {
         user: existeUsu
       });
     }
+    
     const user = new Usuario({
       name: `usuario ${Math.random()}`, //todo: ver round y metodo
       password: "@@@",
       img: "",
       google: false,
-      notification: notificationToken,
+      notification: notification,
     });
 
-    //* Encriptar contrasegna
-    //const salt = bcrypt.genSaltSync(12);
-    //usuario.password = bcrypt.hashSync(password, salt);
+  console.log('user ', user);
 
     //* guarda usuario
     await user.save();
@@ -155,10 +156,51 @@ const borrarUsuario = async (req, res = response) => {
   }
 };
 
+const actLocation = async (req, res) => {
+
+  const ubi = req.body.ubi;
+  const user = req.body.user;
+
+  try {
+    const usuarioDB = await Usuario.findById(user._id);
+
+    if (!usuarioDB) {
+      res.status(404).json({
+        ok: false,
+        msg: "No existe un usuario para ese id",
+      });
+    }
+
+    const usuario = { ...usuarioDB, location: ubi };
+   
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      user._id,
+      usuario,
+      {
+        new: true,
+      }
+    );
+      
+    res.json({
+      ok: true,
+      usuario: usuarioActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      ok: false,
+      msg: "error !!!",
+    });
+  }
+
+  return;
+};
+
 module.exports = {
   getUsuarios,
   crearUsuario,
   actualizarUsuario,
   borrarUsuario,
   getAllNotificationTokens,
+  actLocation,
 };

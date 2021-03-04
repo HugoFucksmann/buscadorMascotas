@@ -40,33 +40,26 @@ const login = async (req, res) => {
 const googleSignIn = async (req, res = response) => {
   
   const googleToken = req.body.token;
-  const notification = req.body.notificationToken;
-  
+  const user = req.body.user;  
   try {
     const { name, email, picture } = await googleVerify(googleToken);
-
+    
     //crear usuario a partir de googleSingIn
     const usuarioDB = await Usuario.findOne({ email });
     let usuario;
-    if (!usuarioDB) {
-      //si no existe el usuario en BD
-      usuario = new Usuario({
-        name,
-        email,
-        password: "@@@",
-        img: picture,
-        google: true,
-        notification: notification,
-      });
-      await usuario.save();
-    } else if(usuarioDB.google) {
+
+    if (usuarioDB) {
       usuario = usuarioDB;
-    }else{
-      usuario = await Usuario.findByIdAndUpdate(usuarioDB._id, {name, email, img: picture, google: true}, {
-        new: true,
-      });
+    } else {
+      usuario = await Usuario.findByIdAndUpdate(
+        user._id,
+        { name, email, img: picture, google: true },
+        {
+          new: true,
+        }
+      );
     }
-   
+       
     const token = await generarJWT(usuario._id);
 
     res.json({
