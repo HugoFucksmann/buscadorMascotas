@@ -33,12 +33,12 @@ const UsuarioSchema = Schema(
       },
     },
   },
-  { colection: "usuarios" }
+  { collection: "usuarios" }
 );
 
 //para cambiar algun parametro, config global (ej: _id por id)
 UsuarioSchema.method("toJSON", function () {
-  const { __v, password, email,  ...Object } = this.toObject();
+  const { __v, password, ...Object } = this.toObject();
 
  
   return Object;

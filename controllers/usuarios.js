@@ -8,14 +8,25 @@ const { generarJWT } = require("../helpers/jwt");
 const getUsuarios = async (req, res) => {
  
   const notification = req.body.notification;
-  const existeUsu = await Usuario.findOne({ notification }); //* promesa
-  
-  if (existeUsu) {
+
+  try {
+     const existeUsu = await Usuario.findOne({ notification }); //* promesa
+
+     if (existeUsu) {
+       return res.json({
+         ok: true,
+         usuario: existeUsu,
+       });
+     }
+  } catch (error) {
+    console.log(error);
     return res.status(400).json({
-      ok: true,
+      ok: false,
       msg: "El usuario ya esta registrado",
     });
   }
+
+ 
  
  
   /* const desde = Number(req.query.desde) || 0;
@@ -57,7 +68,6 @@ const crearUsuario = async (req, res = response) => {
   
   const notification  = req.body.notificationToken;
   //const ubi = req.body.ubi;
-  
   try {
     const existeUsu = await Usuario.findOne({ notification }); 
     
@@ -70,13 +80,10 @@ const crearUsuario = async (req, res = response) => {
     
     const user = new Usuario({
       name: `usuario ${Math.random()}`, //todo: ver round y metodo
-      password: "@@@",
       img: "",
       google: false,
       notification: notification,
     });
-
-  console.log('user ', user);
 
     //* guarda usuario
     await user.save();
@@ -157,25 +164,25 @@ const borrarUsuario = async (req, res = response) => {
 };
 
 const actLocation = async (req, res) => {
-
+  
   const ubi = req.body.ubi;
   const user = req.body.user;
 
   try {
-    const usuarioDB = await Usuario.findById(user._id);
-
+    let usuarioDB = await Usuario.findById(user._id);
+  
     if (!usuarioDB) {
       res.status(404).json({
         ok: false,
         msg: "No existe un usuario para ese id",
       });
     }
-
-    const usuario = { ...usuarioDB, location: ubi };
+    usuarioDB.location = ubi;
+    //const usuario = { ...usuarioDB, location: ubi };
    
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
-      user._id,
-      usuario,
+      usuarioDB._id,
+      usuarioDB,
       {
         new: true,
       }

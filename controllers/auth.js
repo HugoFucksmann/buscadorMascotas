@@ -36,30 +36,32 @@ const login = async (req, res) => {
     });
   }
 };
-
+//TODO: ver error cuando devuelve el mismo usuario
 const googleSignIn = async (req, res = response) => {
   
   const googleToken = req.body.token;
   const user = req.body.user;  
+  const id = user._id
+ 
   try {
     const { name, email, picture } = await googleVerify(googleToken);
     
     //crear usuario a partir de googleSingIn
-    const usuarioDB = await Usuario.findOne({ email });
+    const usuarioDB = await Usuario.findById(id);
     let usuario;
-
+  
     if (usuarioDB) {
-      usuario = usuarioDB;
+     usuario = await Usuario.findByIdAndUpdate(
+       usuarioDB._id,
+       { name, email, img: picture, google: true },
+       {
+         new: true,
+       }
+     );
     } else {
-      usuario = await Usuario.findByIdAndUpdate(
-        user._id,
-        { name, email, img: picture, google: true },
-        {
-          new: true,
-        }
-      );
+      usuario = user
     }
-       
+
     const token = await generarJWT(usuario._id);
 
     res.json({

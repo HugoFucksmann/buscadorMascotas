@@ -4,15 +4,38 @@ const Usuario = require("../models/usuario");
 
 const getMascota = async (req, res) => {
   const id = req.params.idUser;
-
+ 
   let mascotas = await Mascota.find()
   const usuario = await Usuario.findById(id);
   //const total = await Mascota.countDocuments();
 
   try {
-
-     if (mascotas.length === 0) mascotas = false;
     
+      if (mascotas.length === 0) mascotas = false;
+      else  await mascotas.sort((a, b) => {
+          let userLat = parseFloat(usuario.location.latitude);
+          let userLong = parseFloat(usuario.location.longitude);
+
+          let petLatU = parseFloat(a.location.latitude);
+          let petLonU = parseFloat(a.location.longitude);
+          let petU = petLatU - userLat + (petLonU - userLong);
+
+          let petLatD = parseFloat(b.location.latitude);
+          let petLonD = parseFloat(b.location.longitude);
+          let petD = petLatD - userLat + (petLonD - userLong);
+
+          return petD - petU;
+        });
+      if(mascotas) res.json({
+        ok: true,
+        mascotas,
+      })
+      else res.status(400).json({
+        ok: false,
+        msj: 'no hay mascotas perdidas',
+      });
+
+       
       
       /*  await mascotas.filter((mascota) => {
        
@@ -29,25 +52,6 @@ const getMascota = async (req, res) => {
          return (petLat - userLat) ** 2 + (petLon - userLong) ** 2 < 0.1;         
        }); */
 
-       await mascotas.sort((a,b) => {
-          let userLat = parseFloat(usuario.location.latitude);
-          let userLong = parseFloat(usuario.location.longitude);
-
-          let petLatU = parseFloat(a.location.latitude);
-          let petLonU = parseFloat(a.location.longitude);
-          let petU = petLatU - userLat + (petLonU - userLong);
-
-          let petLatD = parseFloat(b.location.latitude);
-          let petLonD = parseFloat(b.location.longitude);
-          let petD = petLatD - userLat + (petLonD - userLong);
-     
-          return petD - petU
-       })
- 
-     res.json({
-       ok: true,
-       mascotas,
-     });
     
   } catch (error) {
     console.log(error);
