@@ -18,10 +18,11 @@ const getMascota = async (req, res) => {
 
           let petLatU = parseFloat(a.location.latitude);
           let petLonU = parseFloat(a.location.longitude);
-          let petU = petLatU - userLat + (petLonU - userLong);
 
           let petLatD = parseFloat(b.location.latitude);
           let petLonD = parseFloat(b.location.longitude);
+
+          let petU = petLatU - userLat + (petLonU - userLong);
           let petD = petLatD - userLat + (petLonD - userLong);
 
           return petD - petU;
@@ -98,7 +99,7 @@ const crearMascota = async (req, res = response) => {
     const usuarios = await Usuario.find();
     
     const messages = usuarios.map((usuario) => {
-      if(usuario.notification){
+      if(usuario.notification && usuario._id !== uid){
          return {
            to: usuario.notification,
            sound: "default",
