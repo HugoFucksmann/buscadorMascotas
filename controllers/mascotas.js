@@ -7,13 +7,36 @@ const getMascota = async (req, res) => {
  
   let mascotas = await Mascota.find()
   const usuario = await Usuario.findById(id);
-  //const total = await Mascota.countDocuments();
+  
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
 
   try {
     
       if (mascotas.length === 0) mascotas = false;
       else  await mascotas.sort((a, b) => {
-        let userLat = parseFloat(usuario.location.latitude);
+        let userLon = parseFloat(usuario.location.longitude);
+        let petLatA = parseFloat(a.location.latitude);
+        let petLonA = parseFloat(a.location.longitude);
+        let petLatB = parseFloat(b.location.latitude);
+        let petLonB = parseFloat(b.location.longitude);
+
+           var R = 6371; // Radius of the earth in km
+           var dLat = deg2rad(petLatB - petLatA); // deg2rad below
+           var dLon = deg2rad(petLonB - petLonA);
+           var a =
+             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+             Math.cos(deg2rad(lat1)) *
+               Math.cos(deg2rad(lat2)) *
+               Math.sin(dLon / 2) *
+               Math.sin(dLon / 2);
+           var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+           var d = R * c; // Distance in km
+           return d;
+
+
+        /* let userLat = parseFloat(usuario.location.latitude);
         let userLon = parseFloat(usuario.location.longitude);
         let petLatA = parseFloat(a.location.latitude);
         let petLonA = parseFloat(a.location.longitude);
@@ -21,7 +44,8 @@ const getMascota = async (req, res) => {
         let petLonB = parseFloat(b.location.longitude);
         let dist2a = (userLat - petLatA) ** 2 + (userLon - petLonA) ** 2;
         let dist2b = (userLat - petLatB) ** 2 + (userLon - petLonB) ** 2;
-        return dist2a - dist2b;
+        return dist2a - dist2b; */
+
       });
       if(mascotas) res.json({
         ok: true,
