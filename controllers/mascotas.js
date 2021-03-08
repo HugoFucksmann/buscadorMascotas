@@ -13,20 +13,16 @@ const getMascota = async (req, res) => {
     
       if (mascotas.length === 0) mascotas = false;
       else  await mascotas.sort((a, b) => {
-          let userLat = parseFloat(usuario.location.latitude);
-          let userLong = parseFloat(usuario.location.longitude);
-
-          let petLatU = parseFloat(a.location.latitude);
-          let petLonU = parseFloat(a.location.longitude);
-
-          let petLatD = parseFloat(b.location.latitude);
-          let petLonD = parseFloat(b.location.longitude);
-
-          let petU = petLatU - userLat + (petLonU - userLong);
-          let petD = petLatD - userLat + (petLonD - userLong);
-
-          return petD - petU;
-        });
+        let userLat = parseFloat(usuario.location.latitude);
+        let userLon = parseFloat(usuario.location.longitude);
+        let petLatA = parseFloat(a.location.latitude);
+        let petLonA = parseFloat(a.location.longitude);
+        let petLatB = parseFloat(b.location.latitude);
+        let petLonB = parseFloat(b.location.longitude);
+        let dist2a = (userLat - petLatA) ** 2 + (userLon - petLonA) ** 2;
+        let dist2b = (userLat - petLatB) ** 2 + (userLon - petLonB) ** 2;
+        return dist2a - dist2b;
+      });
       if(mascotas) res.json({
         ok: true,
         mascotas,
