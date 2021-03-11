@@ -12,49 +12,35 @@ const getMascota = async (req, res) => {
     return deg * (Math.PI / 180);
   }
 
-  try {
+  function distKM(A, B) {
+    const R = 6371;
+    let aLat = parseFloat(A.location.latitude);
+    let aLon = parseFloat(A.location.longitude);
+    let bLat = parseFloat(B.location.latitude);
+    let bLon = parseFloat(B.location.longitude);
+
+    var dLat = 2 * R * Math.sin(deg2rad(aLat - bLat) / 2);
+    var dLon = 2 * R * Math.sin(deg2rad(aLon - bLon) / 2);
+    var dist = Math.sqrt(dLat ** 2 + dLon ** 2);
     
+    return dist;
+  }
+
+  try {
+     console.log({ mascotas });
       if (mascotas.length === 0) mascotas = false;
       else  await mascotas.sort((a, b) => {
-      /*   let userLon = parseFloat(usuario.location.longitude);
-        let petLatA = parseFloat(a.location.latitude);
-        let petLonA = parseFloat(a.location.longitude);
-        let petLatB = parseFloat(b.location.latitude);
-        let petLonB = parseFloat(b.location.longitude);
 
-           var R = 6371; // Radius of the earth in km
-           var dLat = deg2rad(petLatB - petLatA); // deg2rad below
-           var dLon = deg2rad(petLonB - petLonA);
-           var a =
-             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-             Math.cos(deg2rad(petLatA)) *
-               Math.cos(deg2rad(petLatB)) *
-               Math.sin(dLon / 2) *
-               Math.sin(dLon / 2);
-           var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-           var d = R * c; // Distance in km
-           console.log('KM ', d);
-           return d; */
-
-
-        let userLat = parseFloat(usuario.location.latitude);
-        let userLon = parseFloat(usuario.location.longitude);
-        let petLatA = parseFloat(a.location.latitude);
-        let petLonA = parseFloat(a.location.longitude);
-        let petLatB = parseFloat(b.location.latitude);
-        let petLonB = parseFloat(b.location.longitude);
-        let dist2a = (userLat - petLatA) ** 2 + (userLon - petLonA) ** 2;
-        let dist2b = (userLat - petLatB) ** 2 + (userLon - petLonB) ** 2;
+        let dist2a = distKM(usuario, a);
+        let dist2b = distKM(usuario, b);
+        
         return dist2a - dist2b;
 
       });
-      if(mascotas) res.json({
+     
+      res.json({
         ok: true,
         mascotas,
-      })
-      else res.status(400).json({
-        ok: false,
-        msj: 'no hay mascotas perdidas',
       });
 
        
